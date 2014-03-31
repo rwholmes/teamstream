@@ -17,8 +17,7 @@ var newsLimit = 0;
 
 app.factory('dataServices', ['$http', function($http) {
   var getTeams = function() {
-
-    var url = 'http://api.espn.com/v1/sports/soccer/eng.1/news/?apikey=qw7zmfchttxkkkfw9anwa7q4&callback=JSON_CALLBACK';
+    var url = 'http://api.espn.com/v1/sports/soccer/eng.1/teams/?apikey=qw7zmfchttxkkkfw9anwa7q4&callback=JSON_CALLBACK';
     var data = {
         // enter your developer api key here
         apikey: 'qw7zmfchttxkkkfw9anwa7q4',
@@ -31,42 +30,44 @@ app.factory('dataServices', ['$http', function($http) {
 
     return $http.jsonp(url)
       .success(function(data){
-        console.log('Success ', data);
+        console.log('Success getting teams.');
       })
       .error(function(data) {
-        console.log('Error!! ', data);
+        console.log('Error getting teams.');
       });
-
-
   };
-  return { getTeams: getTeams };
+
+  var getHeadlines = function() {
+    var url = 'http://api.espn.com/v1/sports/soccer/eng.1/news/?apikey=qw7zmfchttxkkkfw9anwa7q4&callback=JSON_CALLBACK';
+    return $http.jsonp(url)
+      .success(function(data){
+        console.log('Success getting headlines.');
+      })
+      .error(function(data) {
+        console.log('Error getting headlines.');
+      });
+  };
+  return {
+    getTeams: getTeams,
+    getHeadlines: getHeadlines
+  };
 }]);
 
-app.controller('myAppController', function($scope, dataServices) {
-  var teams = dataServices.getTeams().then(function(data) {
-    $scope.teams = data;
+app.controller('myHeadlinesController', function($scope, dataServices) {
+  var headlines = dataServices.getHeadlines().then(function(data) {
+    console.log('Data.data.headlines ', data.data.headlines);
+    $scope.headlines = data.data.headlines;
   });
+
 });
 
+app.controller('myTeamsController', function($scope, dataServices) {
 
-// var getTeams = function() {
-//   return $.ajax({
-//     url: "http://api.espn.com/v1/sports/soccer/eng.1/news/headlines",
-//     data: {
-//       // enter your developer api key here
-//       apikey: "qw7zmfchttxkkkfw9anwa7q4", limit:5,offset:5,
-//       // the type of data you're expecting back from the api
-//       _accept: "application/json"
-//     },
-//     dataType: "jsonp",
-//     success: function(data) {
-//       console.log('DATA GRAB SUCCESSFUL! ', data);
-//     },
-//     error: function() {
-//        // handle the error
-//     }
-//   });
-// };
+  var teams = dataServices.getTeams().then(function(data) {
+    console.log('Data.data.teams ', data.data.sports[0].leagues[0].teams);
+    $scope.teams = data.data.sports[0].leagues[0].teams;
+  });
+});
 
 
 

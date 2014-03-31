@@ -6,11 +6,13 @@
   <h3 class="text-muted">My TeamStream</h3>
 </div>
 
-<div class="marketing" ng-controller="myAppController">
-  <h4>Pick Your Teams!</h4>
-  <div class="allTeams" ng-repeat="team in teams">
-  {{ team }}
-  </div>
+<div id="Teams" class="marketing" ng-controller="myTeamsController">
+  <h4>Choose Your Teams</h4>
+  <ul>
+    <li class="teams" ng-repeat="team in teams">
+      <a href='#'>{{ team.name }}</a>
+    </li>
+  </ul>
 </div>
 
 <div class="marketing">
@@ -20,11 +22,13 @@
   </p>
 </div>
 
-<div class="marketing">
+<div id="headlines" class="marketing" ng-controller="myHeadlinesController">
   <h4>Headlines</h4>
-  <p>
-    Display some headlines...
-  </p>
+  <ul>
+    <li class="headlines" ng-repeat="headline in headlines">
+      <a href='{{ headline.links.web.href }}'>{{ headline.headline }}</a>
+    </li>
+  </ul>
 </div>
 
 <div class="footer">
