@@ -94,7 +94,9 @@ app.controller('myTeamsController', function($scope, $rootScope, dataServices) {
 
 app.controller('myScoresController', function($scope, $rootScope, dataServices) {
   var teams = dataServices.getTeams().then(function(data) {
-    $scope.teams = data.data.sports[0].leagues[0].teams;
+    if (data.data.sports) {
+      $scope.teams = data.data.sports[0].leagues[0].teams;
+    }
   });
 
   $scope.addToTeams = function(team) {
