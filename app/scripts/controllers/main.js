@@ -4,6 +4,7 @@ var app = angular.module('teamstreamApp');
 
 app.run(function($rootScope) {
   $rootScope.userTeams = [];
+  $rootScope.teamTracker = {};
 });
 
 app.controller('MainCtrl', function ($scope) {
@@ -33,20 +34,16 @@ app.factory('dataServices', ['$http', function($http) {
       };
 
     return $http.jsonp(url)
-      .success(function(data){
-        console.log('Success getting teams. ');
-      })
+      .success(function(data){})
       .error(function(data) {
         console.log('Error getting teams.');
       });
   };
 
   var getHeadlines = function() {
-    var url = 'http://api.espn.com/v1/sports/soccer/eng.1/news/?apikey=qw7zmfchttxkkkfw9anwa7q4&callback=JSON_CALLBACK';
+    var url = 'http://api.espn.com/v1/sports/soccer/eng.1/news/?limit=40&apikey=qw7zmfchttxkkkfw9anwa7q4&callback=JSON_CALLBACK';
     return $http.jsonp(url)
-      .success(function(data){
-        console.log('Success getting headlines.');
-      })
+      .success(function(data){})
       .error(function(data) {
         console.log('Error getting headlines.');
       });
@@ -59,13 +56,13 @@ app.factory('dataServices', ['$http', function($http) {
 
 app.controller('myHeadlinesController', function($scope, $rootScope, dataServices) {
   var headlines = dataServices.getHeadlines().then(function(data) {
-    console.log('Data.data.headlines ', data.data.headlines);
+    console.log('HEADLINES LENGTH: ', data.data.headlines.length);
     var articles = data.data.headlines;
     var filtered = [];
     if (articles) {
       for (var i=0; i<articles.length; i++) {
         for (var k=0; k<$rootScope.userTeams.length; k++) {
-          if ($rootScope.userTeams[k].teamId === articles[i].categories[1].teamId) {
+          if (articles[i].categories[1] && $rootScope.userTeams[k].teamId === articles[i].categories[1].teamId) {
             filtered.push(articles[i]);
           }
         }
@@ -73,7 +70,6 @@ app.controller('myHeadlinesController', function($scope, $rootScope, dataService
       $scope.headlines = filtered;
     }
   });
-
 });
 
 app.controller('myTeamsController', function($scope, $rootScope, dataServices) {
@@ -82,8 +78,12 @@ app.controller('myTeamsController', function($scope, $rootScope, dataServices) {
   });
 
   $scope.addToTeams = function(team) {
-    console.log('Clicked team: ', team);
-    $rootScope.userTeams.push({teamName: team.name, teamId: team.id});
+    if (!$rootScope.teamTracker[team.name]) {
+      $rootScope.userTeams.push({teamName: team.name, teamId: team.id});
+      $rootScope.teamTracker[team.name] = true;
+    } else {
+      console.log('team already exists');
+    }
   };
 });
 
