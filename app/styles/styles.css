@@ -1,11 +1,11 @@
 /* Custom Styles */
 
 .multi-col-list {
-  width: 30em;
+  width: 100%;
 }
 .multi-col-list li {
   float: left;
-  width: 10em;
+  width: 33%;
 }
 .clear {
   clear: left;

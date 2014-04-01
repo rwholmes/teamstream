@@ -48,6 +48,7 @@ app.factory('dataServices', ['$http', function($http) {
         console.log('Error getting headlines.');
       });
   };
+
   return {
     getTeams: getTeams,
     getHeadlines: getHeadlines
@@ -84,6 +85,29 @@ app.controller('myTeamsController', function($scope, $rootScope, dataServices) {
     } else {
       console.log('team already exists');
     }
+  };
+
+  $scope.removeTeam = function(team) {
+    console.log('trying to remove team');
+  };
+});
+
+app.controller('myScoresController', function($scope, $rootScope, dataServices) {
+  var teams = dataServices.getTeams().then(function(data) {
+    $scope.teams = data.data.sports[0].leagues[0].teams;
+  });
+
+  $scope.addToTeams = function(team) {
+    if (!$rootScope.teamTracker[team.name]) {
+      $rootScope.userTeams.push({teamName: team.name, teamId: team.id});
+      $rootScope.teamTracker[team.name] = true;
+    } else {
+      console.log('team already exists');
+    }
+  };
+
+  $scope.removeTeam = function(team) {
+    console.log('trying to remove team');
   };
 });
 
