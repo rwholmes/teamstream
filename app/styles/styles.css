@@ -1,0 +1,12 @@
+/* Custom Styles */
+
+.multi-col-list {
+  width: 30em;
+}
+.multi-col-list li {
+  float: left;
+  width: 10em;
+}
+.clear {
+  clear: left;
+}

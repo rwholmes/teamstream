@@ -2,6 +2,10 @@
 
 var app = angular.module('teamstreamApp');
 
+app.run(function($rootScope) {
+  $rootScope.userTeams = [];
+});
+
 app.controller('MainCtrl', function ($scope) {
   $scope.awesomeThings = [
     'HTML5 Boilerplate',
@@ -30,7 +34,7 @@ app.factory('dataServices', ['$http', function($http) {
 
     return $http.jsonp(url)
       .success(function(data){
-        console.log('Success getting teams.');
+        console.log('Success getting teams. ');
       })
       .error(function(data) {
         console.log('Error getting teams.');
@@ -53,21 +57,41 @@ app.factory('dataServices', ['$http', function($http) {
   };
 }]);
 
-app.controller('myHeadlinesController', function($scope, dataServices) {
+app.controller('myHeadlinesController', function($scope, $rootScope, dataServices) {
   var headlines = dataServices.getHeadlines().then(function(data) {
     console.log('Data.data.headlines ', data.data.headlines);
-    $scope.headlines = data.data.headlines;
+    var articles = data.data.headlines;
+    var filtered = [];
+    if (articles) {
+      for (var i=0; i<articles.length; i++) {
+        for (var k=0; k<$rootScope.userTeams.length; k++) {
+          if ($rootScope.userTeams[k].teamId === articles[i].categories[1].teamId) {
+            filtered.push(articles[i]);
+          }
+        }
+      }
+      $scope.headlines = filtered;
+    }
   });
 
 });
 
-app.controller('myTeamsController', function($scope, dataServices) {
-
+app.controller('myTeamsController', function($scope, $rootScope, dataServices) {
   var teams = dataServices.getTeams().then(function(data) {
-    console.log('Data.data.teams ', data.data.sports[0].leagues[0].teams);
     $scope.teams = data.data.sports[0].leagues[0].teams;
   });
+
+  $scope.addToTeams = function(team) {
+    console.log('Clicked team: ', team);
+    $rootScope.userTeams.push({teamName: team.name, teamId: team.id});
+  };
 });
+
+
+
+
+
+
 
 
 
